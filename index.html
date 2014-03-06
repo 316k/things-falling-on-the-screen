@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Things falling on the screen</title>
+        <meta charset="utf-8" />
+        <script src="jquery-1.11.0.min.js"></script>
+        <script src="jquery.color.js"></script>
+        
+        <script>
+            function randomInt(min, max) {
+                return Math.floor(Math.random() * (max - min + 1) + min);
+            }
+            
+            // Global stuff
+            var colors = ['#C04', '#949', '#49C', '#0C9', '#494', '#940'];
+            var colors_count; // Automatically generated
+            var color_counter = 0;
+            
+            // Thing-relative stuff
+            var thing; // A sample thing
+            var delay = 1300;
+            var speed = 0.13;
+            var score = 0;
+            var lives = 9;
+            var lastTimestamp = 0;
+            
+            $(document).ready(function(){
+                $('#flash, #play-again').hide();
+                $('html').click(setup);
+                colors_count = colors.length;
+            });
+            
+            function setup() {
+                var text = 'Things falling on the screen';
+                // Lots of times
+                for(var i=0; i<25; i++) {
+                    text += ' Things falling on the screen';
+                }
+                
+                $('#title').addClass('play').text(text);
+                $('html').unbind('keypress').unbind('click');
+                thing = $('.thing').clone();
+                lastTimestamp = window.performance.now();
+                loop();
+                setTimeout(createThing, delay);
+            }
+            
+            function loop() {
+                var now = window.performance.now();
+                
+                $('.thing').each(function() {
+                    // Speed = deltaPosition/deltaTime => speed * deltaTime = deltaPosition
+                    
+                    var deltaPosition = speed*(now-lastTimestamp);
+                    $(this).data('position', $(this).data('position') + deltaPosition);
+                    
+                    $(this).css({
+                        top: $(this).data('position') + 'px',
+                    })
+                    
+                    // Clean out dead stuff
+                    if(parseInt($(this).css('top')) + $(this).height() > parseInt($('body').height())) {
+                        $(this).remove();
+                        lives--;
+                        $('#lives').text(parseInt(lives));
+                    }
+                });
+                
+                lastTimestamp = now;
+                
+                if(lives > 0) {
+                    setTimeout(loop, 10);
+                } else {
+                    $('#title').removeClass('play').css('text-decoration', 'blink').text('You lost THE GAME');
+                    $('#play-again').show();
+                }
+            }
+            
+            function destroy(context) {
+                if($(context).hasClass('dead') || lives <= 0) {
+                    return;
+                }
+            
+                score++;
+                
+                $('#things').text(score);
+                
+                $('body').animate({
+                    backgroundColor: colors[(++color_counter)%colors_count]
+                  }, 75);
+                
+                if(score && score % 7) {
+                    if(score % 2) {
+                        speed += 0.002;
+                    } else {
+                        delay *= 0.99;
+                    }
+                }
+                
+                $(context).addClass('dead').fadeOut(500, function() {
+                    $(this).remove();
+                    lives+=0.5;
+                    $('#lives').text(parseInt(lives));
+                });
+            }
+            
+            function createThing() {
+                thing.clone().css({
+                    left: randomInt(0, $("html").width() - thing.width()),
+                    top: -thing.height(),
+                    backgroundColor: colors[randomInt(0, colors_count-1)],
+                    borderRadius: randomInt(0, 40) + 'px ' + randomInt(0, 40) + 'px /' + randomInt(0, 40) + 'px ' + randomInt(0, 40) + 'px',
+                }).appendTo('body');
+                
+                if(lives) {
+                    setTimeout(createThing, delay);
+                }
+            }
+        </script>
+        <style>
+            html {
+                overflow: hidden;
+                height: 100%;
+            }
+
+            body {
+                padding: 0;
+                margin: 0;
+                background-color: #C04;
+                height: 92%;
+                width: 100%;
+                border: 0;
+            }
+            
+            #flash {
+                background-color: #FFF;
+                position: absolute;
+                z-index: 1000;
+                width: 100%;
+                height: 100%;
+                left: 0;
+                top: 0;
+            }
+            
+            #title {
+                margin: 1%;
+                color: black;
+            }
+            
+            #title.play {
+                overflow: hidden;
+                height: 20px;
+                font-size: 10px;
+                opacity: 0.4;
+                position: absolute;
+            }
+            
+            #play-again {
+                width: 30%;
+                height: 20%;
+                display: block;
+                margin: auto;
+                border: 2px dotted lightgreen;
+                background-color: black;
+                font-size: 30px;
+                color: lightgreen;
+            }
+            
+            .thing {
+                width: 40px;
+                height: 40px;
+                background-color: red;
+                border-radius: 15px 15px 5px 3px / 5px 15px 15px;
+                position: absolute;
+                top: -40px;
+                left: 45%;
+            }
+            
+            #score {
+                color: black;
+                position: fixed;
+                bottom: 1%;
+                left: 1%;
+            }
+            
+            #bottom {
+                width: 100%;
+                height: 0.7%;
+                position: absolute;
+                top: 92%;
+                background-color: darkred;
+            }
+        </style>
+    </head>
+    <body>
+        <h1 id="title">Things falling on the screen - Click to begin</h1>
+        <button id="play-again" onclick="window.location = ''">Play again !</button>
+        <div id="flash"></div>
+        <div class="thing" data-position="-30" onmouseover="destroy(this)">
+        </div>
+        <div id="bottom"></div>
+        <p id="score">Killed <span id="things">0</span> things // <span id="lives">9</span> lives left</p>
+    </body>
+</html>
