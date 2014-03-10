@@ -253,6 +253,7 @@
                 height: 40px;
                 background-color: red;
                 border-radius: 15px 15px 5px 3px / 5px 15px 15px;
+                border: 1.5px solid black;
                 position: absolute;
                 top: -40px;
                 left: 45%;
@@ -288,9 +289,9 @@
         <h1 id="title">Things falling on the screen - Click to begin</h1>
         <h2 id="indication">Two rules : 1. Pass your mouse over the things before they fall; 2. Do not touch the black spots !</h2>
         <button id="play-again" onclick="window.location = ''">Play again !</button>
-        <div class="spot" onmouseleave="blackSpot(this)"></div>
+        <div class="spot" onmouseover="blackSpot(this)"></div>
         <div id="flash"></div>
-        <div class="thing" data-position="-30" onmouseover="destroy(this)">
+        <div class="thing" data-position="-30" onclick="destroy(this)" onmouseover="destroy(this)">
         </div>
         <div id="bottom"></div>
         <p id="score">Killed <span id="things">0</span> things // <span id="lives">4</span> lives left</p>
