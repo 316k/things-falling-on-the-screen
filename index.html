@@ -43,16 +43,16 @@
                 for(var i=0; i<25; i++) {
                     text += ' Things falling on the screen';
                 }
-                
+
                 lives = 4;
-                
+
                 $('#title').addClass('play').text(text);
                 $('#indication').hide();
-                
+
                 $('html').unbind('keypress').unbind('click');
                 thing = $('.thing').clone();
                 spot = $('.spot').clone();
-                
+
                 lastTimestamp = window.performance.now();
                 loop();
                 setTimeout(createThing, delay);
@@ -61,23 +61,23 @@
 
             function loop() {
                 var now = window.performance.now();
-                
+
                 $('.thing').each(function() {
                     // Speed = deltaPosition/deltaTime => speed * deltaTime = deltaPosition
-                    
+
                     var deltaPosition = speed*(now-lastTimestamp);
                     $(this).data('position', $(this).data('position') + deltaPosition);
-                    
+
                     $(this).css({
                         top: $(this).data('position') + 'px',
                     })
-                    
+
                     // Remove dead stuff
                     if(parseInt($(this).css('top')) + $(this).height() > $('body').height()) {
                         $(this).remove();
                         lives--;
                         $('#lives').text(lives);
-                        
+
                         $('#indication').text('Pass your mouse over the things before they fall !').css({
                             position: 'fixed',
                             left: ($('body').width()/2 - $('#indication').width()/2) + 'px',
@@ -85,22 +85,22 @@
                         }).show().delay(400).fadeOut('slow');
                     }
                 });
-                
+
                 lastTimestamp = now;
-                
+
                 if(lives > 0) {
                     setTimeout(loop, 10);
                 } else {
                     $('#title').removeClass('play').css('text-decoration', 'blink').text('You lost THE GAME');
-                    
+
                     $('#play-again').css('left', $('body').width()/2 - $('#play-again').width()/2).show();
-                    
+
                     $('#indication').hide().text('Final score : ' + score + ' thing(s) killed').css({
                         position: 'fixed',
                         left: ($('body').width()/2 - $('#indication').width()/2) + 'px',
                         top:  '32%',
                     }).fadeIn(1000);
-                    
+
                     $('.thing, .spot').each(function() {
                         $(this).remove();
                     });
@@ -111,19 +111,17 @@
                 if($(context).hasClass('dead') || lives <= 0) {
                     return;
                 }
-            
+
                 score++;
-                
+
                 $('#things').text(score);
-                
-                // var color = randomInt(0, 50) ? colors[(++color_counter)%colors_count] : 'black'; // Maybe this is a little too hard
-                
+
                 var color = colors[(++color_counter)%colors_count];
-                
+
                 $('body').animate({
                     backgroundColor: color,
                   }, 75);
-                
+
                 if(score && score % 7) {
                     if(score % 2) {
                         speed += 0.002;
@@ -131,50 +129,50 @@
                         delay *= 0.99;
                     }
                 }
-                
+
                 $(context).addClass('dead').fadeOut(500, function() {
                     $(this).remove();
                     $('#lives').text(parseInt(lives));
                 });
             }
-            
+
             function blackSpot(context) {
                 if($(context).hasClass('dead') || lives <= 0) {
                     return;
                 }
-                
+
                 lives--;
                 $('#lives').text(lives);
-                
+
                 $(context).addClass('dead').css('backgroundColor', 'white').delay(300).fadeOut(200, function() {
                     $(this).remove();
                 });
-                
+
                 $('#indication').text('Don\'t touch the black spots !!').css({
                     position: 'fixed',
                     left: ($('body').width()/2 - $('#indication').width()/2) + 'px',
                     top:  ($('body').height()/8 - $('#indication').height()/2) + 'px',
                 }).show().delay(400).fadeOut('slow');
             }
-            
+
             function createBlackSpot() {
                 if(lives <= 0) {
                     return;
                 }
-                
+
                 var left = 0;
                 var top = 0;
-                
+
                 while(!left || !top || (Math.abs(mouseX - left) < 10 && Math.abs(mouseY - top) < 10)) {
                     left = randomInt(1, $('body').width() - spot.width());
                     top = randomInt(1, $('body').height() - spot.height());
                 }
-                
+
                 spot.clone().css({
                     left: left,
                     top: top,
                 }).hide().appendTo('body').fadeIn('fast');
-                
+
                 setTimeout(createBlackSpot, delay*1.2);
             }
 
@@ -182,14 +180,14 @@
                 if(lives <= 0) {
                     return;
                 }
-                
+
                 thing.clone().css({
                     left: randomInt(0, $("html").width() - thing.width()),
                     top: -thing.height(),
                     backgroundColor: colors[randomInt(0, colors_count-1)],
                     borderRadius: randomInt(0, 40) + 'px ' + randomInt(0, 40) + 'px /' + randomInt(0, 40) + 'px ' + randomInt(0, 40) + 'px',
                 }).appendTo('body');
-                
+
                 setTimeout(createThing, delay);
             }
         </script>
@@ -207,7 +205,7 @@
                 width: 100%;
                 border: 0;
             }
-            
+
             #flash {
                 background-color: #FFF;
                 position: absolute;
@@ -217,12 +215,12 @@
                 left: 0;
                 top: 0;
             }
-            
+
             #title {
                 margin: 1%;
                 color: black;
             }
-            
+
             #title.play {
                 overflow: hidden;
                 height: 20px;
@@ -230,11 +228,11 @@
                 opacity: 0.4;
                 position: absolute;
             }
-            
+
             #indication {
                 margin: 2%;
             }
-            
+
             #play-again {
                 width: 60%;
                 height: 20%;
@@ -247,7 +245,7 @@
                 font-size: 30px;
                 color: lightgreen;
             }
-            
+
             .thing {
                 width: 40px;
                 height: 40px;
@@ -258,7 +256,7 @@
                 top: -40px;
                 left: 45%;
             }
-            
+
             .spot {
                 width: 15px;
                 height: 15px;
@@ -268,14 +266,14 @@
                 top: -15px;
                 left: 50%;
             }
-            
+
             #score {
                 color: black;
                 position: fixed;
                 bottom: 1%;
                 left: 1%;
             }
-            
+
             #bottom {
                 width: 100%;
                 height: 0.7%;
