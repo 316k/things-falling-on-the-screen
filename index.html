@@ -82,7 +82,7 @@
                             position: 'fixed',
                             left: ($('body').width()/2 - $('#indication').width()/2) + 'px',
                             top:  ($('body').height()/8 - $('#indication').height()/2) + 'px',
-                        }).show().delay(400).fadeOut('slow');
+                        }).show().delay(600).fadeOut('slow');
                     }
                 });
 
@@ -113,6 +113,14 @@
                 }
 
                 score++;
+                
+                if(score % 10 == 0) {
+                    $('#indication').hide().text('Killed ' + score + ' things !').css({
+                        position: 'fixed',
+                        left: ($('body').width()/2 - $('#indication').width()/2) + 'px',
+                        top:  ($('body').height()/8 - $('#indication').height()/2) + 'px',
+                    }).show().delay(600).fadeOut('slow');
+                }
 
                 $('#things').text(score);
 
@@ -152,7 +160,7 @@
                     position: 'fixed',
                     left: ($('body').width()/2 - $('#indication').width()/2) + 'px',
                     top:  ($('body').height()/8 - $('#indication').height()/2) + 'px',
-                }).show().delay(400).fadeOut('slow');
+                }).show().delay(600).fadeOut('slow');
             }
 
             function createBlackSpot() {
